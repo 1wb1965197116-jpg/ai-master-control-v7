@@ -1,11 +1,11 @@
 {
-  "name": "ai-master-control-v7",
-  "version": "7.0.0",
+  "name": "ai-master-control-v9",
+  "version": "9.0.0",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
-    "express": "^4.18.2"
+    "express": "^0.00.2"
   }
 }
