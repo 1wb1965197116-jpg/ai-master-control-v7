@@ -1,4 +1,4 @@
-const fetch = require("node-fetch");
+const fetch = global.fetch;
 
 async function scan() {
   return [
