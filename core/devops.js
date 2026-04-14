@@ -46,3 +46,10 @@ async function runDevOps(metrics) {
 }
 
 module.exports = { runDevOps };
+if (result.status === "FAILED") {
+
+  return {
+    action: "ROLLBACK",
+    message: "Deployment failed — reverting"
+  };
+}
