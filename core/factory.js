@@ -4,9 +4,11 @@ const { autoFix } = require("../brain/fixEngine");
 const { simulateStart } = require("../brain/simulator");
 const { testApp } = require("../brain/test");
 const { deploy } = require("../deploy/deploy");
-
+const { generateBusinessModel } = require("../brain/businessBrain");
+const { attachRevenue } = require("../brain/revenueEngine");
 async function buildSystem(goal) {
-
+const business = generateBusinessModel(type);
+app = attachRevenue(app, business);
   console.log("🏭 Factory starting...");
 
   // 1. Decide app type
