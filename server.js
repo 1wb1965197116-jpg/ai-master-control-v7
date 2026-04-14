@@ -14,9 +14,9 @@ app.use(express.static("dashboard"));
 /* =========================
    🧠 HOME ROUTE
 ========================= */
+const { runCloud } = require("./cloud/orchestrator");
 app.get("/", (req, res) => {
-  res.send("🏢 AI COMPANY OS v12 ONLINE");
-});
+  res.send("🏢 AI COMPANY OS v12 const { runCloud } = require("./cloud/orchestrator");
 app.get("/logs", (req, res) => {
   res.json({
     message: "Live logs coming soon",
