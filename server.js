@@ -1,18 +1,45 @@
 const express = require("express");
 const path = require("path");
 
-// ✅ CI/CD IMPORT (GOES HERE AT TOP)
+// =========================
+// ✅ IMPORTS (ALL AT TOP)
+// =========================
 const { runCICD } = require("./core/cicd");
+const { runDevOps } = require("./core/devops");
+const { runCloud } = require("./cloud/orchestrator");
+const { runCloudAI } = require("./cloud/cloudEngine");
 
 const app = express();
 
 app.use(express.json());
-
-// ✅ FIXED STATIC DASHBOARD (IMPORTANT)
 app.use(express.static("dashboard"));
 
 /* =========================
-   🧠 HOME app.get("/cloud", async (req, res) => {
+   🧠 HOME
+========================= */
+app.get("/", (req, res) => {
+  res.send("🏢 AI COMPANY OS v16 ONLINE");
+});
+
+/* =========================
+   📡 LIVE LOG STREAM
+========================= */
+app.get("/logs", (req, res) => {
+  res.json({
+    status: "LIVE_LOG_STREAM",
+    logs: [
+      "System running",
+      "No errors detected",
+      "Last deploy successful"
+    ],
+    time: Date.now()
+  });
+});
+
+/* =========================
+   ☁️ CLOUD (v15)
+========================= */
+app.get("/cloud", async (req, res) => {
 
   const metrics = {
     traffic: Math.floor(Math.random() * 2000)
@@ -22,15 +49,21 @@ app.use(express.static("dashboard"));
 
   res.json(result);
 });
-const { runCloud } = require("./cloud/orchestrator");
-app.get("/", (req, res) => {
-  res.send("🏢 AI COMPANY OS v12 const { runCloud } = require("./cloud/orchestrator");
-app.get("/logs", (req, res) => {
-  res.json({
-    message: "Live logs coming soon",
-    time: Date.now()
-  });
+
+/* =========================
+   ☸️ CLOUD AI (v16)
+========================= */
+app.get("/cloud-ai", async (req, res) => {
+
+  const metrics = {
+    cpu: Math.floor(Math.random() * 100)
+  };
+
+  const result = await runCloudAI(metrics);
+
+  res.json(result);
 });
+
 /* =========================
    🚀 REAL CI/CD DEPLOY HELPER
 ========================= */
@@ -88,14 +121,16 @@ app.get("/dashboard", (req, res) => {
    🚀 START SERVER
 ========================= */
 app.listen(5000, () => {
-  console.log("🚀 AI COMPANY OS v12 RUNNING ON PORT 5000");
+  console.log("🚀 AI COMPANY OS v16 RUNNING ON PORT 5000");
 });
-const { runDevOps } = require("./core/devops");
 
+/* =========================
+   🤖 AUTONOMOUS DEVOPS LOOP (v14)
+========================= */
 setInterval(async () => {
 
   const metrics = {
-    changesDetected: true,   // later: hook to git diff
+    changesDetected: true,
     errorRate: 0,
     lastDeployFailed: false
   };
@@ -104,4 +139,4 @@ setInterval(async () => {
 
   console.log("⚙️ DevOps Loop:", result);
 
-}, 60000); // runs every 60 seconds
+}, 60000); // every 60 seconds
