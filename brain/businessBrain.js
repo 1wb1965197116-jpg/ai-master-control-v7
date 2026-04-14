@@ -1,26 +1,28 @@
 function generateBusinessModel(type) {
 
-  if (type === "dashboard") {
-    return {
-      idea: "Analytics Dashboard SaaS",
-      pricing: "$0.00/month",
-      monetization: "subscription"
-    };
-  }
-
-  if (type === "api-service") {
-    return {
-      idea: "API SaaS service",
-      pricing: "pay-per-call",
-      monetization: "usage-based"
-    };
-  }
-
-  return {
-    idea: "basic web tool",
-    pricing: "free + ads",
-    monetization: "ads"
+  const base = {
+    monetization: "subscription",
+    price: "$0.00/month",
+    scaling: true
   };
+
+  if (type.includes("saas")) {
+    return {
+      ...base,
+      niche: "SaaS productivity tools",
+      pricing: "$0.00-$0.00/month",
+      upsell: "pro analytics + AI features"
+    };
+  }
+
+  if (type.includes("api")) {
+    return {
+      monetization: "usage-based",
+      price: "$0.00/request"
+    };
+  }
+
+  return base;
 }
 
 module.exports = { generateBusinessModel };
