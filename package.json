@@ -1,0 +1,9 @@
+{
+  "name": "ai-master-control-v7",
+  "version": "7.0.0",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^0.00.2",
+    "node-fetch": "^2.6.7"
+  }
+}
