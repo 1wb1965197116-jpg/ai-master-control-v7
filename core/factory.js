@@ -2,28 +2,51 @@ const { decideProduct } = require("../brain/productBrain");
 const { generateApp } = require("../agents/generator.agent");
 const { autoFix } = require("../brain/fixEngine");
 const { simulateStart } = require("../brain/simulator");
+const { testApp } = require("../brain/test");
+const { deploy } = require("../deploy/deploy");
 
 async function buildSystem(goal) {
 
-  console.log("🏭 SOFTWARE FACTORY STARTED");
+  console.log("🏭 Factory starting...");
 
-  // STEP 1: decide what to build
+  // 1. Decide app type
   const type = decideProduct(goal);
 
-  // STEP 2: generate app
+  // 2. Generate app
   let app = generateApp(type);
 
-  // STEP 3: auto fix generated code
-  app.backend = autoFix(app.backend);
-  app.frontend = autoFix(app.frontend);
+  // 3. Auto fix generated code
+  app.backend = autoFix(app.backend || "");
+  app.frontend = autoFix(app.frontend || "");
 
-  // STEP 4: simulate before deploy
-  const test = simulateStart([app.backend, app.frontend]);
+  // 4. Simulate runtime BEFORE deploy
+  const simulation = simulateStart([app.backend, app.frontend]);
+
+  if (!simulation.safe) {
+    return {
+      status: "BLOCKED",
+      reason: simulation.errors
+    };
+  }
+
+  // 5. Test system
+  const test = testApp(app);
+
+  if (!test.safeToDeploy) {
+    return {
+      status: "BLOCKED_BY_TEST",
+      test
+    };
+  }
+
+  // 6. Deploy
+  const live = await deploy(app);
 
   return {
+    status: "LIVE",
     type,
-    app,
-    test
+    test,
+    deploy: live
   };
 }
 
