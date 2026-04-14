@@ -3,7 +3,7 @@ const { runCompany } = require("./core/company");
 const { getMetrics } = require("./brain/metrics");
 
 const app = express();
-app.use(app.use(express.static("dashboard"));
+app.use(express.static("dashboard"));
 
 app.get("/dashboard", (req, res) => {
   res.sendFile(__dirname + "/dashboard/index.html");
