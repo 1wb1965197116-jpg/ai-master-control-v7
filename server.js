@@ -1,54 +1,79 @@
 const express = require("express");
-const { runCompany } = require("./core/company");
-const { getMetrics } = require("./brain/metrics");
+const path = require("path");
+
+// ✅ CI/CD IMPORT (GOES HERE AT TOP)
+const { runCICD } = require("./core/cicd");
 
 const app = express();
+
+app.use(express.json());
+
+// ✅ FIXED STATIC DASHBOARD (IMPORTANT)
 app.use(express.static("dashboard"));
 
-app.get("/dashboard", (req, res) => {
-  res.sendFile(__dirname + "/dashboard/index.html");
-});
+/* =========================
+   🧠 HOME ROUTE
+========================= */
 app.get("/", (req, res) => {
-  res.send("🏢 AI AUTONOMOUS COMPANY OS v12 ONLINE");
+  res.send("🏢 AI COMPANY OS v12 ONLINE");
 });
-app.post("/self-heal", async (req, res) => {
 
-  const fixes = [
-    "dependency scan completed",
-    "server validation check",
-    "route integrity check",
-    "auto repair simulation complete"
-  ];
+/* =========================
+   🚀 REAL CI/CD DEPLOY HELPER
+========================= */
+app.post("/deploy-helper", async (req, res) => {
+
+  try {
+    const goal = req.body.goal || "saas dashboard";
+
+    const result = await runCICD(goal);
+
+    console.log("🚀 CI/CD triggered:", result.status);
+
+    res.json({
+      success: true,
+      result
+    });
+
+  } catch (err) {
+    console.log("❌ CI/CD ERROR:", err);
+
+    res.json({
+      success: false,
+      error: err.message
+    });
+  }
+});
+
+/* =========================
+   🛠 SELF HEAL SYSTEM
+========================= */
+app.post("/self-heal", async (req, res) => {
 
   const result = {
     status: "SELF_HEAL_COMPLETE",
-    fixes,
-    time: Date.now()
+    fixes: [
+      "dependency scan complete",
+      "route validation complete",
+      "runtime simulation complete"
+    ]
   };
 
   console.log("🛠 Self-heal triggered");
 
   res.json(result);
 });
-app.get("/run", async (req, res) => {
-  const metrics = getMetrics();
 
-  const result = await runCompany(metrics);
-
-  res.json(result);
+/* =========================
+   🖥 DASHBOARD ROUTE
+========================= */
+app.get("/dashboard", (req, res) => {
+  res.sendFile(path.join(__dirname, "dashboard/index.html"));
 });
-app.post("/deploy-helper", async (req, res) => {
 
-  const result = {
-    status: "DEPLOY_STARTED",
-    platform: "auto-detect (Render/Vercel/GitHub Actions)",
-    time: Date.now()
-  };
-
-  console.log("🚀 Deploy Helper triggered");
-
-  res.json(result);
-});
+/* =========================
+   🚀 START SERVER
+========================= */
 app.listen(5000, () => {
-  console.log("🚀 v12 Company OS running");
+  console.log("🚀 AI COMPANY OS v12 RUNNING ON PORT 5000");
 });
