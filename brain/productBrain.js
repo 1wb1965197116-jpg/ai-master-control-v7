@@ -1,18 +1,12 @@
 function decideProduct(goal) {
 
-  if (goal.includes("dashboard")) {
-    return "react-dashboard-app";
-  }
+  goal = goal.toLowerCase();
 
-  if (goal.includes("ai tool")) {
-    return "node-ai-api-service";
-  }
+  if (goal.includes("dashboard")) return "dashboard";
+  if (goal.includes("saas")) return "saas";
+  if (goal.includes("api")) return "api-service";
 
-  if (goal.includes("saas")) {
-    return "full-stack-saas-template";
-  }
-
-  return "generic-web-app";
+  return "basic-app";
 }
 
 module.exports = { decideProduct };
