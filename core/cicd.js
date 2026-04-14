@@ -29,4 +29,57 @@ async function runCICD(goal) {
   };
 }
 
+module.exports = { const simpleGit = require("simple-git");
+const fetch = require("node-fetch");
+const git = simpleGit();
+
+async function pushToGitHub() {
+
+  console.log("📦 Committing changes...");
+
+  await git.add(".");
+  await git.commit("🤖 AI auto deploy update");
+  await git.push("origin", "main");
+
+  return true;
+}
+
+async function triggerVercel() {
+
+  console.log("🚀 Triggering Vercel deploy...");
+
+  const res = await fetch(process.env.VERCEL_DEPLOY_HOOK, {
+    method: "POST"
+  });
+
+  return await res.text();
+}
+
+async function runCICD(goal) {
+
+  try {
+    console.log("🧠 CI/CD STARTED:", goal);
+
+    // 1. Push to GitHub
+    await pushToGitHub();
+
+    // 2. Trigger Vercel deploy
+    const deployResponse = await triggerVercel();
+
+    return {
+      status: "SUCCESS",
+      github: "pushed",
+      vercel: "triggered",
+      deployResponse
+    };
+
+  } catch (err) {
+
+    return {
+      status: "FAILED",
+      error: err.message
+    };
+  }
+}
+
 module.exports = { runCICD };
