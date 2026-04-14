@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AI Company OS Dashboard</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #0f172a;
+      color: #fff;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .card {
+      background: #1e293b;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 10px;
+    }
+
+    button {
+      padding: 10px;
+      margin: 5px;
+      cursor: pointer;
+      border: none;
+      border-radius: 8px;
+      background: #38bdf8;
+      color: black;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background: #0ea5e9;
+    }
+
+    pre {
+      background: black;
+      padding: 10px;
+      border-radius: 8px;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>🏢 AI COMPANY CONTROL CENTER v12</h1>
+
+<div class="card">
+  <h2>🧠 Company Status</h2>
+  <pre id="output">Loading...</pre>
+</div>
+
+<div class="card">
+  <h2>⚙️ Actions</h2>
+
+  <button onclick="runCompany()">▶ Run Company Brain</button>
+
+  <button onclick="deployHelper()">🚀 Deploy Helper</button>
+
+  <button onclick="buildSaaS()">🏗 Build SaaS App</button>
+
+  <button onclick="selfHeal()">🛠 Self Heal System</button>
+</div>
+
+<script src="app.js"></script>
+
+</body>
+</html>
