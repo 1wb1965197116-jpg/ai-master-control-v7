@@ -1,32 +1,32 @@
-const scout = require("../agents/scout.agent");
-const fixer = require("../agents/fixer.agent");
-const tester = require("../agents/tester.agent");
-const deploy = require("../agents/deploy.agent");
+const { scanDependencies, autoFixDependencies } = require("../brain/dependencyBrain");
+const { simulateStart } = require("../brain/simulator");
+const { autoFix } = require("../brain/fixEngine");
 
-async function runOrchestrator() {
-  console.log("🧠 Scout scanning repos...");
+async function runOrchestrator(project) {
 
-  const repos = await scout.scan();
+  console.log("🧠 DEPLOY BRAIN ACTIVE");
 
-  let report = [];
+  // STEP 1: dependency scan
+  let issues = scanDependencies(project.path);
 
-  for (let repo of repos) {
+  // STEP 2: auto fix package.json
+  project.package = autoFixDependencies(project.package);
 
-    console.log("⚙️ Processing:", repo.name);
+  // STEP 3: simulate runtime BEFORE deploy
+  const sim = simulateStart(project.files);
 
-    const fixes = await fixer.fix(repo);
-    const test = await tester.test(repo);
-    const deployStatus = await deploy.deploy(repo);
+  if (!sim.safe) {
+    console.log("⚠ Simulation failed — fixing...");
 
-    report.push({
-      repo: repo.name,
-      fixes,
-      test,
-      deploy: deployStatus
-    });
+    project.files = project.files.map(f => autoFix(f));
   }
 
-  return report;
+  // STEP 4: return safe deploy package
+  return {
+    status: "SAFE_TO_DEPLOY",
+    issues,
+    simulation: sim
+  };
 }
 
 module.exports = { runOrchestrator };
