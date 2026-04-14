@@ -51,3 +51,10 @@ async function buildSystem(goal) {
 }
 
 module.exports = { buildSystem };
+const { logEvent, analyzePatterns } = require("../brain/learningEngine");
+
+// after deploy or failure:
+logEvent("BUILD_RUN");
+
+// before return:
+const insight = analyzePatterns();
