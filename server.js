@@ -77,3 +77,18 @@ app.get("/dashboard", (req, res) => {
 app.listen(5000, () => {
   console.log("🚀 AI COMPANY OS v12 RUNNING ON PORT 5000");
 });
+const { runDevOps } = require("./core/devops");
+
+setInterval(async () => {
+
+  const metrics = {
+    changesDetected: true,   // later: hook to git diff
+    errorRate: 0,
+    lastDeployFailed: false
+  };
+
+  const result = await runDevOps(metrics);
+
+  console.log("⚙️ DevOps Loop:", result);
+
+}, 60000); // runs every 60 seconds
