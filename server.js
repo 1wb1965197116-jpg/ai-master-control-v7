@@ -19,7 +19,18 @@ app.get("/run", async (req, res) => {
 
   res.json(result);
 });
+app.post("/deploy-helper", async (req, res) => {
 
+  const result = {
+    status: "DEPLOY_STARTED",
+    platform: "auto-detect (Render/Vercel/GitHub Actions)",
+    time: Date.now()
+  };
+
+  console.log("🚀 Deploy Helper triggered");
+
+  res.json(result);
+});
 app.listen(5000, () => {
   console.log("🚀 v12 Company OS running");
 });
