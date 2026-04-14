@@ -1,12 +1,9 @@
 function autoFix(code) {
 
-  // FIX 1: replace node-fetch
-  code = code.replace(
-    "require('node-fetch')",
-    "global.fetch"
-  );
+  if (!code) return "";
 
-  // FIX 2: enforce express version safety handled elsewhere
+  // FIX: remove bad fetch patterns (Render issue fix)
+  code = code.replace(/require\("node-fetch"\)/g, "global.fetch");
 
   return code;
 }
