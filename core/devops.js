@@ -1,55 +1,69 @@
 const { runCICD } = require("./cicd");
-const { shouldDeploy } = require("../brain/autoDeployBrain");
-const { logDeploy, getLastDeploy } = require("../brain/deployHistory");
 
 async function runDevOps(metrics) {
 
-  const decision = shouldDeploy(metrics);
+  try {
 
-  console.log("🧠 DevOps Decision:", decision);
+    console.log("🧠 DevOps running...");
 
-  // 🚀 DEPLOY
-  if (decision === "deploy") {
+    let decision = "idle";
 
-    const result = await runCICD("auto deploy");
+    if (metrics.lastDeployFailed) {
+      decision = "rollback";
+    }
 
-    logDeploy({
-      type: "deploy",
-      result
-    });
+    if (metrics.changesDetected) {
+      decision = "deploy";
+    }
 
-    return result;
-  }
+    if (metrics.errorRate > 5) {
+      decision = "pause";
+    }
 
-  // 🔁 ROLLBACK
-  if (decision === "rollback") {
+    // =========================
+    // 🚀 DEPLOY
+    // =========================
+    if (decision === "deploy") {
 
-    const last = getLastDeploy();
+      const result = await runCICD("auto deploy");
+
+      return {
+        status: "DEPLOYED",
+        result
+      };
+    }
+
+    // =========================
+    // 🔁 ROLLBACK
+    // =========================
+    if (decision === "rollback") {
+      return {
+        status: "ROLLBACK_TRIGGERED",
+        action: "revert to last stable build"
+      };
+    }
+
+    // =========================
+    // ⏸ PAUSE
+    // =========================
+    if (decision === "pause") {
+      return {
+        status: "PAUSED",
+        reason: "High error rate detected"
+      };
+    }
 
     return {
-      status: "ROLLBACK_TRIGGERED",
-      revertingTo: last
+      status: "IDLE"
     };
-  }
 
-  // ⏸ PAUSE
-  if (decision === "pause") {
+  } catch (err) {
+
     return {
-      status: "DEPLOY_PAUSED",
-      reason: "High error rate"
+      status: "DEVOPS_ERROR",
+      error: err.message
     };
   }
-
-  return {
-    status: "IDLE"
-  };
 }
 
 module.exports = { runDevOps };
-if (result.status === "FAILED") {
-
-  return {
-    action: "ROLLBACK",
-    message: "Deployment failed — reverting"
-  };
-}
