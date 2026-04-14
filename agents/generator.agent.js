@@ -1,21 +1,25 @@
 function generateApp(type) {
 
-  const base = {
+  const app = {
     frontend: "",
-    backend: "",
-    package: {}
+    backend: ""
   };
 
-  if (type === "react-dashboard-app") {
-    base.frontend = "<html>Dashboard UI</html>";
-    base.backend = "express server";
+  if (type === "dashboard") {
+    app.frontend = "<html>Dashboard UI</html>";
+    app.backend = "const express=require('express');";
   }
 
-  if (type === "node-ai-api-service") {
-    base.backend = "AI API endpoints";
+  if (type === "api-service") {
+    app.backend = "const express=require('express'); API server";
   }
 
-  return base;
+  if (type === "saas") {
+    app.frontend = "<html>SaaS UI</html>";
+    app.backend = "const express=require('express'); SaaS backend";
+  }
+
+  return app;
 }
 
 module.exports = { generateApp };
