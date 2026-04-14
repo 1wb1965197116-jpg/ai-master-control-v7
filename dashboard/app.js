@@ -27,3 +27,10 @@ async function selfHeal() {
 
   alert("🛠 Self-heal triggered: " + JSON.stringify(data));
 }
+async function getLogs() {
+  const res = await fetch("/logs");
+  const data = await res.json();
+
+  document.getElementById("output").innerText =
+    JSON.stringify(data, null, 2);
+}
