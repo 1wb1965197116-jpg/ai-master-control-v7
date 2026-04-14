@@ -12,8 +12,16 @@ app.use(express.json());
 app.use(express.static("dashboard"));
 
 /* =========================
-   🧠 HOME ROUTE
-========================= */
+   🧠 HOME app.get("/cloud", async (req, res) => {
+
+  const metrics = {
+    traffic: Math.floor(Math.random() * 2000)
+  };
+
+  const result = await runCloud(metrics);
+
+  res.json(result);
+});
 const { runCloud } = require("./cloud/orchestrator");
 app.get("/", (req, res) => {
   res.send("🏢 AI COMPANY OS v12 const { runCloud } = require("./cloud/orchestrator");
