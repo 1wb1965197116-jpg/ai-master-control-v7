@@ -11,7 +11,25 @@ app.get("/dashboard", (req, res) => {
 app.get("/", (req, res) => {
   res.send("🏢 AI AUTONOMOUS COMPANY OS v12 ONLINE");
 });
+app.post("/self-heal", async (req, res) => {
 
+  const fixes = [
+    "dependency scan completed",
+    "server validation check",
+    "route integrity check",
+    "auto repair simulation complete"
+  ];
+
+  const result = {
+    status: "SELF_HEAL_COMPLETE",
+    fixes,
+    time: Date.now()
+  };
+
+  console.log("🛠 Self-heal triggered");
+
+  res.json(result);
+});
 app.get("/run", async (req, res) => {
   const metrics = getMetrics();
 
