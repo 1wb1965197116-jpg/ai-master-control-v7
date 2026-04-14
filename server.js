@@ -17,7 +17,12 @@ app.use(express.static("dashboard"));
 app.get("/", (req, res) => {
   res.send("🏢 AI COMPANY OS v12 ONLINE");
 });
-
+app.get("/logs", (req, res) => {
+  res.json({
+    message: "Live logs coming soon",
+    time: Date.now()
+  });
+});
 /* =========================
    🚀 REAL CI/CD DEPLOY HELPER
 ========================= */
