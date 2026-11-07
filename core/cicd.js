@@ -6,8 +6,8 @@ const git = simpleGit();
 // =========================
 // 🧠 GIT CONFIG FIX (RENDER SAFE)
 // =========================
-git.addConfig("user.name", "AI DevOps Bot");
-git.addConfig("user.email", "ai@autodeploy.local");
+// No git configuration is changed on import.
+
 
 // =========================
 // 📦 PUSH TO GITHUB
