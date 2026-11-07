@@ -31,11 +31,11 @@ app.get("/", (req, res) => {
 ========================= */
 app.get("/logs", (req, res) => {
   res.json({
-    status: "LIVE_LOG_STREAM",
+    status: "DEMO_LOGS",
     logs: [
       "System running",
       "No errors detected",
-      "Last deploy successful"
+      "Deployment status not verified"
     ],
     time: Date.now()
   });
@@ -99,27 +99,8 @@ app.get("/k8s-ai", async (req, res) => {
 /* =========================
    🚀 CI/CD DEPLOY HELPER
 ========================= */
-app.post("/deploy-helper", async (req, res) => {
-  try {
-    const goal = req.body.goal || "saas dashboard";
-
-    const result = await runCICD(goal);
-
-    console.log("🚀 CI/CD triggered:", result.status);
-
-    res.json({
-      success: true,
-      result
-    });
-
-  } catch (err) {
-    console.log("❌ CI/CD ERROR:", err);
-
-    res.json({
-      success: false,
-      error: err.message
-    });
-  }
+app.post("/deploy-helper", (req, res) => {
+  res.status(503).json({error: "Deployment is disabled pending secure authorization and review."});
 });
 
 /* =========================
@@ -150,26 +131,12 @@ app.get("/dashboard", (req, res) => {
 /* =========================
    🤖 DEVOPS LOOP (AUTO)
 ========================= */
-setInterval(async () => {
-  try {
-    const metrics = {
-      changesDetected: true,
-      errorRate: 0,
-      lastDeployFailed: false
-    };
-
-    const result = await runDevOps(metrics);
-
-    console.log("⚙️ DevOps Loop:", result);
-
-  } catch (err) {
-    console.log("❌ DevOps Error:", err.message);
-  }
-}, 60000);
+// Automatic deployment is intentionally disabled. It can commit and push to main.
 
 /* =========================
    🚀 START SERVER
 ========================= */
-app.listen(5000, () => {
-  console.log("🚀 AI COMPANY OS v16 RUNNING ON PORT 5000");
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`AI COMPANY OS listening on ${PORT}`);
 });
