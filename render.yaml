@@ -7,3 +7,10 @@ services:
     startCommand: npm start
     healthCheckPath: /health
     autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: 22
+      - key: ADMIN_API_TOKEN
+        sync: false
+      - key: DEPLOY_APPROVAL_TOKEN
+        sync: false
