@@ -1,175 +1,79 @@
 const express = require("express");
 const path = require("path");
-
-// =========================
-// 🧠 CORE SYSTEMS
-// =========================
+const crypto = require("crypto");
 const { runCICD } = require("./core/cicd");
-const { runDevOps } = require("./core/devops");
-
-// =========================
-// ☁️ CLOUD SYSTEMS
-// =========================
 const { runCloud } = require("./cloud/orchestrator");
 const { runCloudAI } = require("./cloud/cloudEngine");
 const { runClusterAI } = require("./cloud/clusterAI");
 
 const app = express();
+const PORT = Number(process.env.PORT || 10000);
+app.disable("x-powered-by");
+app.use(express.json({ limit: "1mb" }));
+app.use(express.static(path.join(__dirname, "dashboard")));
 
-app.use(express.json());
-app.use(express.static("dashboard"));
-
-/* =========================
-   🏠 HOME
-========================= */
-app.get("/", (req, res) => {
-  res.send("🏢 AI COMPANY OS v16 ONLINE");
+app.get("/", (_req, res) => {
+  res.send("AI COMPANY OS is online");
 });
 
-/* =========================
-   📡 LIVE LOGS
-========================= */
-app.get("/logs", (req, res) => {
-  res.json({
-    status: "LIVE_LOG_STREAM",
-    logs: [
-      "System running",
-      "No errors detected",
-      "Last deploy successful"
-    ],
-    time: Date.now()
-  });
+app.get("/health", (_req, res) => {
+  res.status(200).json({ ok: true, service: "ai-master-control-v7" });
 });
 
-/* =========================
-   ☁️ CLOUD (v15)
-========================= */
-app.get("/cloud", async (req, res) => {
+app.get("/logs", (_req, res) => {
+  res.json({ status: "LIVE_LOG_STREAM", logs: ["System running"], time: Date.now() });
+});
+
+app.get("/cloud", async (_req, res) => {
   try {
-    const metrics = {
-      traffic: Math.floor(Math.random() * 2000)
-    };
-
-    const result = await runCloud(metrics);
-
-    res.json(result);
-
+    res.json(await runCloud({ traffic: 0 }));
   } catch (err) {
-    res.json({ status: "FAILED", error: err.message });
+    res.status(500).json({ status: "FAILED", error: err.message });
   }
 });
 
-/* =========================
-   ☸️ CLOUD AI (v16)
-========================= */
-app.get("/cloud-ai", async (req, res) => {
+app.get("/cloud-ai", async (_req, res) => {
   try {
-    const metrics = {
-      cpu: Math.floor(Math.random() * 100)
-    };
-
-    const result = await runCloudAI(metrics);
-
-    res.json(result);
-
+    res.json(await runCloudAI({ cpu: 0 }));
   } catch (err) {
-    res.json({ status: "FAILED", error: err.message });
+    res.status(500).json({ status: "FAILED", error: err.message });
   }
 });
 
-/* =========================
-   ☸️ KUBERNETES AI (v17 LAYER)
-========================= */
-app.get("/k8s-ai", async (req, res) => {
+app.get("/k8s-ai", async (_req, res) => {
   try {
-    const metrics = {
-      cpu: Math.floor(Math.random() * 100)
-    };
-
-    const result = await runClusterAI(metrics);
-
-    res.json(result);
-
+    res.json(await runClusterAI({ cpu: 0 }));
   } catch (err) {
-    console.log("❌ K8S ERROR:", err);
-    res.json({ status: "FAILED", error: err.message });
+    res.status(500).json({ status: "FAILED", error: err.message });
   }
 });
 
-/* =========================
-   🚀 CI/CD DEPLOY HELPER
-========================= */
+function deploymentApproved(req) {
+  const expected = process.env.DEPLOY_APPROVAL_TOKEN;
+  const supplied = req.get("x-deploy-approval") || "";
+  if (!expected || !supplied) return false;
+  const a = Buffer.from(expected);
+  const b = Buffer.from(supplied);
+  return a.length === b.length && crypto.timingSafeEqual(a, b);
+}
+
 app.post("/deploy-helper", async (req, res) => {
+  if (!deploymentApproved(req)) {
+    return res.status(403).json({ success: false, error: "Explicit deployment approval token required" });
+  }
   try {
-    const goal = req.body.goal || "saas dashboard";
-
+    const goal = typeof req.body.goal === "string" ? req.body.goal.slice(0, 500) : "approved deployment";
     const result = await runCICD(goal);
-
-    console.log("🚀 CI/CD triggered:", result.status);
-
-    res.json({
-      success: true,
-      result
-    });
-
+    res.json({ success: result.status === "SUCCESS", result });
   } catch (err) {
-    console.log("❌ CI/CD ERROR:", err);
-
-    res.json({
-      success: false,
-      error: err.message
-    });
+    res.status(500).json({ success: false, error: err.message });
   }
 });
 
-/* =========================
-   🛠 SELF HEAL SYSTEM
-========================= */
-app.post("/self-heal", (req, res) => {
-  const result = {
-    status: "SELF_HEAL_COMPLETE",
-    fixes: [
-      "dependency scan complete",
-      "route validation complete",
-      "runtime simulation complete"
-    ]
-  };
-
-  console.log("🛠 Self-heal triggered");
-
-  res.json(result);
+app.get("/dashboard", (_req, res) => {
+  res.sendFile(path.join(__dirname, "dashboard", "index.html"));
 });
 
-/* =========================
-   🖥 DASHBOARD
-========================= */
-app.get("/dashboard", (req, res) => {
-  res.sendFile(path.join(__dirname, "dashboard/index.html"));
-});
-
-/* =========================
-   🤖 DEVOPS LOOP (AUTO)
-========================= */
-setInterval(async () => {
-  try {
-    const metrics = {
-      changesDetected: true,
-      errorRate: 0,
-      lastDeployFailed: false
-    };
-
-    const result = await runDevOps(metrics);
-
-    console.log("⚙️ DevOps Loop:", result);
-
-  } catch (err) {
-    console.log("❌ DevOps Error:", err.message);
-  }
-}, 60000);
-
-/* =========================
-   🚀 START SERVER
-========================= */
-app.listen(5000, () => {
-  console.log("🚀 AI COMPANY OS v16 RUNNING ON PORT 5000");
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`AI Master Control listening on ${PORT}`);
 });
